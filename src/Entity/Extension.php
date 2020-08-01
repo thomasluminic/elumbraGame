@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\CardTypeRepository;
+use App\Repository\ExtensionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=CardTypeRepository::class)
+ * @ORM\Entity(repositoryClass=ExtensionRepository::class)
  */
-class CardType
+class Extension
 {
     /**
      * @ORM\Id()
@@ -25,7 +25,7 @@ class CardType
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=Card::class, mappedBy="card_type")
+     * @ORM\OneToMany(targetEntity=Card::class, mappedBy="extension")
      */
     private $cards;
 
@@ -63,7 +63,7 @@ class CardType
     {
         if (!$this->cards->contains($card)) {
             $this->cards[] = $card;
-            $card->setCardType($this);
+            $card->setExtension($this);
         }
 
         return $this;
@@ -74,8 +74,8 @@ class CardType
         if ($this->cards->contains($card)) {
             $this->cards->removeElement($card);
             // set the owning side to null (unless already changed)
-            if ($card->getCardType() === $this) {
-                $card->setCardType(null);
+            if ($card->getExtension() === $this) {
+                $card->setExtension(null);
             }
         }
 

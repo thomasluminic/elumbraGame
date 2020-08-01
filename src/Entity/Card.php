@@ -3,10 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\CardRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=CardRepository::class)
+ * @Vich\Uploadable
  */
 class Card
 {
@@ -48,11 +53,6 @@ class Card
     private $number;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $extension;
-
-    /**
      * @ORM\ManyToOne(targetEntity=CardType::class, inversedBy="cards")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -86,6 +86,29 @@ class Card
      * @ORM\Column(type="string", length=255)
      */
     private $picture;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Keyword::class, inversedBy="cards")
+     */
+    private $keyword;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Extension::class, inversedBy="cards")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $extension;
+
+    /**
+     * @Vich\UploadableField(mapping="card_picture", fileNameProperty="picture")
+     * @var File|null
+     */
+    private $imageFile;
+
+
+    public function __construct()
+    {
+        $this->keyword = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -164,18 +187,6 @@ class Card
         return $this;
     }
 
-    public function getExtension(): ?string
-    {
-        return $this->extension;
-    }
-
-    public function setExtension(string $extension): self
-    {
-        $this->extension = $extension;
-
-        return $this;
-    }
-
     public function getCardType(): ?CardType
     {
         return $this->card_type;
@@ -241,10 +252,64 @@ class Card
         return $this->picture;
     }
 
-    public function setPicture(string $picture): self
+    public function setPicture(?string $picture): self
     {
         $this->picture = $picture;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Keyword[]
+     */
+    public function getKeyword(): Collection
+    {
+        return $this->keyword;
+    }
+
+    public function addKeyword(Keyword $keyword): self
+    {
+        if (!$this->keyword->contains($keyword)) {
+            $this->keyword[] = $keyword;
+        }
+
+        return $this;
+    }
+
+    public function removeKeyword(Keyword $keyword): self
+    {
+        if ($this->keyword->contains($keyword)) {
+            $this->keyword->removeElement($keyword);
+        }
+
+        return $this;
+    }
+
+    public function getExtension(): ?Extension
+    {
+        return $this->extension;
+    }
+
+    public function setExtension(?Extension $extension): self
+    {
+        $this->extension = $extension;
+
+        return $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
     }
 }
