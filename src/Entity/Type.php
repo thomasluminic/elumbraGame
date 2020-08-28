@@ -34,6 +34,11 @@ class Type
         $this->cards = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->getName();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

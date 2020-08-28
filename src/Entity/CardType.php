@@ -25,11 +25,6 @@ class CardType
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $keyword;
-
-    /**
      * @ORM\OneToMany(targetEntity=Card::class, mappedBy="card_type")
      */
     private $cards;
@@ -37,6 +32,11 @@ class CardType
     public function __construct()
     {
         $this->cards = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
     }
 
     public function getId(): ?int
@@ -52,18 +52,6 @@ class CardType
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getKeyword(): ?string
-    {
-        return $this->keyword;
-    }
-
-    public function setKeyword(string $keyword): self
-    {
-        $this->keyword = $keyword;
 
         return $this;
     }

@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\RarityRepository;
+use App\Repository\ExtensionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=RarityRepository::class)
+ * @ORM\Entity(repositoryClass=ExtensionRepository::class)
  */
-class Rarity
+class Extension
 {
     /**
      * @ORM\Id()
@@ -25,7 +25,7 @@ class Rarity
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=Card::class, mappedBy="rarity")
+     * @ORM\OneToMany(targetEntity=Card::class, mappedBy="extension")
      */
     private $cards;
 
@@ -68,7 +68,7 @@ class Rarity
     {
         if (!$this->cards->contains($card)) {
             $this->cards[] = $card;
-            $card->setRarity($this);
+            $card->setExtension($this);
         }
 
         return $this;
@@ -79,8 +79,8 @@ class Rarity
         if ($this->cards->contains($card)) {
             $this->cards->removeElement($card);
             // set the owning side to null (unless already changed)
-            if ($card->getRarity() === $this) {
-                $card->setRarity(null);
+            if ($card->getExtension() === $this) {
+                $card->setExtension(null);
             }
         }
 
