@@ -104,6 +104,11 @@ class Card
      */
     private $imageFile;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $cost;
+
 
     public function __construct()
     {
@@ -311,5 +316,17 @@ class Card
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = new \DateTimeImmutable();
         }
+    }
+
+    public function getCost(): ?int
+    {
+        return $this->cost;
+    }
+
+    public function setCost(int $cost): self
+    {
+        $this->cost = $cost;
+
+        return $this;
     }
 }
